@@ -1,2 +1,14 @@
-# graphql-react-demo
-GraphQL Presentation Project
+# GraphQL + React Event Booking API
+
+# Usage
+
+Install all dependencies
+
+```sh
+npm install
+```
+
+Run the server
+```sh
+npm/yarn start
+```

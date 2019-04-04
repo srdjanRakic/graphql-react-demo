@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
+import { Route, Redirect, Switch } from 'react-router-dom';
 
 import AuthPage from './pages/Auth';
 import BookingsPage from './pages/Bookings';
@@ -30,8 +30,7 @@ class App extends Component {
 
   render() {
     return (
-    <ThemeWrapper withProvider={ThemeProvider}>
-      <BrowserRouter>
+      <ThemeWrapper withProvider={ThemeProvider}>
         <React.Fragment>
           <AuthContext.Provider
             value={{
@@ -60,8 +59,7 @@ class App extends Component {
             </ContentHolder>
           </AuthContext.Provider>
         </React.Fragment>
-      </BrowserRouter>
-    </ThemeWrapper>
+      </ThemeWrapper>
     );
   }
 }

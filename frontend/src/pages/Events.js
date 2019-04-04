@@ -2,11 +2,13 @@ import React, { Component } from 'react';
 import styled from "styled-components";
 import { Button, Typography, Input, Label, TextArea } from "@inplayer-org/inplayer-ui";
 
+import EventList from "../components/Events/EventList/EventList";
 import Modal from '../components/Modal/Modal';
 import Backdrop from '../components/Backdrop/Backdrop';
-import EventList from '../components/Events/EventList/EventList';
 import Spinner from '../components/Spinner/Spinner';
 import AuthContext from '../context/auth-context';
+
+import GetEvents from './GetEvents';
 
 const EventsHolder = styled.div`
   text-align: center;
@@ -17,6 +19,21 @@ const EventsHolder = styled.div`
   max-width: 80%;
 `;
 
+// const CREATE_EVENT = gql`
+//   mutation createEvent(
+//     $title: String!
+//     $description: String!
+//     $price: Float!
+//     $date: String!
+//   ) {
+//     createEvent(eventInput: { title: $title, description: $description, price: $price, date: $date}) {
+//       _id
+//       title
+//       description
+//     }
+//   }
+// `;
+
 class EventsPage extends Component {
   titleElRef = React.createRef();
   priceElRef = React.createRef();
@@ -25,10 +42,10 @@ class EventsPage extends Component {
   isActive = true;
 
   state = {
-    creating: false,
+    isCreating: false,
     events: [],
     isLoading: false,
-    selectedEvent: null
+    selectedEvent: null,
   };
 
   static contextType = AuthContext;
@@ -38,11 +55,11 @@ class EventsPage extends Component {
   }
 
   startCreateEventHandler = () => {
-    this.setState({ creating: true });
+    this.setState({ isCreating: true });
   };
 
   modalConfirmHandler = () => {
-    this.setState({ creating: false });
+    this.setState({ isCreating: false });
     const title = this.titleElRef.current.value;
     const price = +this.priceElRef.current.value;
     const date = this.dateElRef.current.value;
@@ -118,7 +135,7 @@ class EventsPage extends Component {
   };
 
   modalCancelHandler = () => {
-    this.setState({ creating: false, selectedEvent: null });
+    this.setState({ isCreating: false, selectedEvent: null });
   };
 
   fetchEvents() {
@@ -226,8 +243,10 @@ class EventsPage extends Component {
   render() {
     return (
       <React.Fragment>
-        {(this.state.creating || this.state.selectedEvent) && <Backdrop />}
-        {this.state.creating && (
+        {(this.state.isCreating || this.state.selectedEvent) && (
+          <Backdrop />
+        )}
+        {this.state.isCreating && (
           <Modal
             title="Add Event"
             canCancel
@@ -236,27 +255,31 @@ class EventsPage extends Component {
             onConfirm={this.modalConfirmHandler}
             confirmText="Confirm"
           >
-            <form>
-              <>
-                <Label htmlFor="title">Title</Label>
-                <Input type="text" id="title" ref={this.titleElRef} />
-              </>
-              <>
-                <Label htmlFor="price">Price</Label>
-                <Input type="number" id="price" ref={this.priceElRef} />
-              </>
-              <>
-                <Label htmlFor="date">Date</Label>
-                <Input type="datetime-local" id="date" ref={this.dateElRef} />
-              </>
-              <>
-                <Label htmlFor="description">Description</Label>
-                <TextArea
-                  id="description"
-                  rows="4"
-                  ref={this.descriptionElRef}
-                />
-              </>
+          <form>
+            <>
+              <Label htmlFor="title">Title</Label>
+              <Input type="text" id="title" ref={this.titleElRef} />
+            </>
+            <>
+              <Label htmlFor="price">Price</Label>
+              <Input type="number" id="price" ref={this.priceElRef} />
+            </>
+            <>
+              <Label htmlFor="date">Date</Label>
+              <Input
+                type="datetime-local"
+                id="date"
+                ref={this.dateElRef}
+              />
+            </>
+            <>
+              <Label htmlFor="description">Description</Label>
+              <TextArea
+                id="description"
+                rows="4"
+                ref={this.descriptionElRef}
+              />
+            </>
             </form>
           </Modal>
         )}
@@ -284,7 +307,9 @@ class EventsPage extends Component {
         {this.context.token && (
           <EventsHolder>
             <Typography variant="p">Share your own Events!</Typography>
-            <Button onClick={this.startCreateEventHandler}>Create Event</Button>
+            <Button onClick={this.startCreateEventHandler}>
+              Create Event
+            </Button>
           </EventsHolder>
         )}
         {this.state.isLoading ? (
@@ -295,6 +320,10 @@ class EventsPage extends Component {
             authUserId={this.context.userId}
             onViewDetail={this.showDetailHandler}
           />
+          // <GetEvents
+          //   authUserId={this.context.userId}
+          //   onViewDetail={this.showDetailHandler}
+          // />
         )}
       </React.Fragment>
     );
